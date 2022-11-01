@@ -1,25 +1,32 @@
 import { type NextPage } from "next";
+import { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import { trpc } from "../utils/trpc";
 
+
+
 const Home: NextPage = () => {
   // const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
   const { data: session, status } = useSession();
 
   if (status === "loading") {
-    return <main>Loading...</main>;
+    return <main className="flex flex-col items-center pt-4">Loading...</main>;
   }
 
   return (
-    <main>
-      <h1>Shortlists</h1>
-      <div>
+    <main className="flex flex-col items-center">
+      <h1 className="text-3xl pt-4">Shortlists</h1>
+      <div className="pt-10">
       {session ? (
         <div>
           <p>Hi {session.user?.name}</p>
+          <div className="pt-6">
+            <AddList/>
+           
+          </div>
             <button onClick={() => signOut()}>
               Logout
             </button>
@@ -30,11 +37,81 @@ const Home: NextPage = () => {
       </button>
       )}
       </div>
+      <div>
+        <Lists/>
+      </div>
 
       
     </main>
   );
 };
+
+const Lists = () => {
+  const {
+    data: userlists,
+    isLoading
+  } = trpc.userList.getAllLists.useQuery();
+
+  if (isLoading) return <div>Fetching lists...</div>
+
+  return (
+    <div className="flex flex-col gap-4">
+      {userlists?.map((list, index) => {
+        return (
+          <div key={index}>
+            <h1>{list.title}</h1>
+            
+          </div>
+        )
+      })}
+
+    </div>
+  )
+}
+
+const AddList = () => {
+  const [title, setTitle] = useState("");
+  const utils = trpc.useContext();
+  const postList = trpc.userList.postList.useMutation({
+    onMutate: () => {
+       utils.userList.getAllLists.cancel();
+       const optimisticUpdate = utils.userList.getAllLists.getData();
+       if (optimisticUpdate) {
+        utils.userList.getAllLists.setData(optimisticUpdate)
+       }
+    },
+    onSettled: () => {
+      utils.userList.getAllLists.invalidate();
+    }
+  });
+
+  return (
+    <form className="flex gap-2" onSubmit={(event) => {
+      event.preventDefault();
+
+      postList.mutate({
+        title,
+        //creatorId: session.user?.name as string
+      })
+      setTitle("");
+    }} >
+      <input
+        type='text'
+        value={title}
+        placeholder="Enter a list title..."
+        minLength={2}
+        maxLength={50}
+        onChange={(event) => setTitle(event.target.value)}
+        className='px-4 py-4 rounded-md border-2 border-zinc-800 bg-neutral-900 focus:outline-none'
+      />
+      <button className="p-2 rounded border-2 border-zinc-800 focus:outline-none">
+        Add List
+      </button>
+    </form>
+  )
+}
+
+
 
 export default Home;
 

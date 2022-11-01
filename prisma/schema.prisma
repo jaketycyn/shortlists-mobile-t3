@@ -66,11 +66,14 @@ model VerificationToken {
 }
 
 model UserItem {
-  id   String  @id @default(cuid())
-  name String?
+  id    String  @id @default(cuid())
+  title String?
+  // todo: createdBy ID which references the current user logged in ID
 }
 
 model UserList {
-  id   String  @id @default(cuid())
-  name String?
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  title     String?
+  // todo: createdBy ID which references the current user logged in ID
 }
