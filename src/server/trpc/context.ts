@@ -15,7 +15,7 @@ type CreateContextOptions = {
  * @see https://beta.create.t3.gg/en/usage/trpc#-servertrpccontextts
  **/
 export const createContextInner = async (opts: CreateContextOptions) => {
-  return {
+  return { 
     session: opts.session,
     prisma,
   };

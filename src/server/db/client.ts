@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 
 import { env } from "../../env/server.mjs";
 
+
+//stops prisma from creating new instances everytime prisma is called/this file is called
 declare global {
   // eslint-disable-next-line no-var
   var prisma: PrismaClient | undefined;
