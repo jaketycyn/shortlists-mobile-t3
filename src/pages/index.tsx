@@ -10,12 +10,8 @@ import LoginPage from "./login";
 
 
 const Home: NextPage = () => {
-  // const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
-  const { data: session, status } = useSession();
 
-  // if (status === "loading") {
-  //   return <main className="flex flex-col items-center pt-4">Loading...</main>;
-  // }
+  const { data: session, status } = useSession();
 
   return (
     <main className="flex flex-col ">
@@ -37,9 +33,7 @@ const Registration = () => {
    const { data: session, status } = useSession();
 
   return (
-
     <LoginPage/>
-  
   )
 }
 

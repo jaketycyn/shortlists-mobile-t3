@@ -70,6 +70,9 @@ function RegisterPage(){
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <input type="hidden" name="remember" defaultValue="true" />
 
+            {/* Fix later with automatic error && error.message*/}
+          <p className="text-red-700 text-center font-bold">{error && "Email Already in Use"}</p>
+
           <div className="-space-y-px rounded-md shadow-sm">
             <div className="mt-2 text-center">
               {/* {showAlert && (
